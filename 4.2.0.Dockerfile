@@ -22,6 +22,13 @@ RUN ["/bin/bash", "-c", "source /tmp/ncores.txt && cd /tmp/rstudio-rstudio-8aaa5
 RUN cp /usr/local/extras/init.d/debian/rstudio-server /etc/init.d/
 RUN mkdir -p /etc/R
 RUN mkdir -p /etc/rstudio
+RUN useradd -r rstudio-server
+
+# server configuration
+RUN cat <<EOF >/etc/rstudio/rserver.conf
+server-user=rstudio-server
+server-daemonize=0
+EOF
 
 # Log to stderr
 RUN cat <<EOF >/etc/rstudio/logging.conf
@@ -43,7 +50,7 @@ RUN echo "lock-type=advisory" >/etc/rstudio/file-locks
 
 RUN mkdir -p /etc/s6-overlay/s6-rc.d/rstudio-server
 RUN echo 'longrun' >> /etc/s6-overlay/s6-rc.d/rstudio-server/type
-RUN echo '#!/bin/sh\nexec 2>&1\n/usr/local/bin/rstudio-server restart' >> /etc/s6-overlay/s6-rc.d/rstudio-server/run
+RUN echo '#!/bin/bash\nexec 2>&1\n/usr/local/bin/rserver' >> /etc/s6-overlay/s6-rc.d/rstudio-server/run
 RUN mkdir -p /etc/s6-overlay/s6-rc.d/user/contents.d
 RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/rstudio-server
 EXPOSE 8787
