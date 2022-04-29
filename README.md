@@ -7,7 +7,7 @@ The follwing can be used to pull and run the image from DockerHub, without needi
 docker \
     run \
     --rm \
-    --name r-command-line \
+    --name rstudio-server \
     -d \
     -v /tmp:/HostData \
     -p 2200:22 \
